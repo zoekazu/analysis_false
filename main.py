@@ -23,7 +23,6 @@ fish_files = ImgsInDirAsGray('./images/pin/fish')
 ref_files = ImgsInDirAsBool('./images/pin/ref',  bool_switch=True)
 true_files = ImgsInDirAsBool('./images/pin/true', bool_switch=True)
 false_files = ImgsInDirAsBool('./images/pin/false', bool_switch=True)
-
 # %%
 
 
@@ -52,7 +51,7 @@ for num, (fish, ref, true, false) in enumerate(zip(fish_files.read_files(), ref_
     nlabels, labels, labels_status, center_object = cv2.connectedComponentsWithStats(
         true_or_false.astype(np.uint8)*255, connectivity=8)
     # display_cv(true_or_false.astype(np.uint8)*255)
-    # display_label(nlabels. labels, true)
+    display_label(nlabels, labels, true)
     # display_cv(true, bool_switch=True)
     nlabels_true = []
 
@@ -89,7 +88,7 @@ for (bool_type, color, maker_size) in [(False, 'b', 5), (True, 'r', 15)]:
 plt.xlabel('Width')
 plt.ylabel('Height')
 plt.legend()
-
+plt.savefig('height-width.png')
 
 # %%
 fig = plt.figure()
@@ -102,12 +101,14 @@ ax.set_zlabel('Area')
 
 df_connected['true'] = df_connected['true'].astype(bool)
 df_connected.head()
-for (bool_type, color, maker_size) in [(False, 'b', 5), (True, 'r', 15)]:
+for (bool_type, color) in [(False, 'b'), (True, 'r')]:
     ax.plot(df_connected.width[df_connected['true'] == bool_type],
             df_connected.height[df_connected['true'] == bool_type],
             df_connected.area[df_connected['true'] == bool_type],
-            "o", c=color, label=bool_type, s=maker_size)
+            "o", c=color, label=bool_type)
+plt.legend()
 plt.show()
+plt.savefig('3D.png')
 
 
 # %%
@@ -120,6 +121,8 @@ for (bool_type, color, maker_size) in [(False, 'b', 5), (True, 'r', 15)]:
                 c=color, label=bool_type, s=maker_size)
 plt.xlabel('Number')
 plt.ylabel('Area')
+plt.legend()
+plt.savefig('area.png')
 # %%
 plt.figure()
 df_width_sorted = df_connected.sort_values(by=['width'], ascending=True)
@@ -130,7 +133,8 @@ for (bool_type, color, maker_size) in [(False, 'b', 5), (True, 'r', 15)]:
                 c=color, label=bool_type, s=maker_size)
 plt.xlabel('Number')
 plt.ylabel('Width')
-
+plt.legend()
+plt.savefig('width.png')
 
 # %%
 plt.figure()
@@ -142,5 +146,12 @@ for (bool_type, color, maker_size) in [(False, 'b', 5), (True, 'r', 15)]:
                 c=color, label=bool_type, s=maker_size)
 plt.xlabel('Number')
 plt.ylabel('Height')
+plt.legend()
+plt.savefig('height.png')
+# %%
+plt.table(df_connected.head())
+# %%
+df_connected.to_pickle('./pandas_df_connected.pkl')
+
 
 # %%
